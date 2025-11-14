@@ -1,32 +1,38 @@
-const express = require("express"); 
-const cors = require("cors");
-const { MongoClient, ServerApiVersion, ObjectId } = require("mongodb");
-const http = require("http");
+const express = require('express')
+const  MongoClient  = require('mongodb').MongoClient
+ const ObjectID = require('mongodb').ObjectID;
 
-const app = express();
-app.use(cors());
-app.use(express.json());
+const app = express()
+app.use(express.json())
+app.set('port', 3000)
 
-const uri = "mongodb+srv://ruqaiyah:RR1026@cw1.u4ssebh.mongodb.net/?appName=1";
-const client = new MongoClient(uri, { serverApi: ServerApiVersion.v1 })
 
-let db = client.db('Afterschool');
+app.use((req, res, next) => {
+    res.setHeader('Access-Control-Allow-Origin', '*')
+    res.setHeader("Access-Control-Allow-Credentials", "true")
+    res.setHeader("Access-Control-Allow-Methods", "GET,HEAD,OPTIONS,POST,PUT")
+    res.setHeader("Access-Control-Allow-Headers", "Content-Type")
+    next()
+})
 
-async function startServer() {
-  try {
-    await client.connect();
-    db = client.db('Afterschool');
-    console.log("Connected to MongoDB");
-    
-  http.createServer(app).listen(3000, () => {
-      console.log("Server running on port 3000");
-    });
+let db;
 
-  } catch (err) {
-    console.error("Failed to connect to MongoDB", err);
-  }
-}
+MongoClient.connect(
+    'mongodb+srv://ruqaiyah:RR1026@cw1.u4ssebh.mongodb.net',
+    (err, client) => {
+        if (err) {
+            console.log("Failed to connect:", err);
+            return;
+        }
 
+        db = client.db("Afterschool");
+        console.log("Connected to MongoDB");
+
+        app.listen(app.get('port'), () => {
+            console.log(`Server running on port ${app.get('port')}`);
+        });
+    }
+);
 
 app.param('lesson', function(req,res,next, lesson) {
   req.collection = db.collection(lesson);
@@ -44,10 +50,10 @@ app.get('/Afterschool/:lesson', async (req, res, next) => {
 
 app.post('/Afterschool/:orderInfo', async (req, res, next) => {
   try {
-    const { name, phoneNumber, email } = req.body;
+    const { name, phoneNumber, email } = req.body; //add the  spaces and the lessonIds 
 
     const collection = db.collection('orderInfo');
-    const order = { name, phoneNumber, email };
+    const order = { name, phoneNumber, email};
 
     const result = await collection.insertOne(order);
     res.status(201).send(result);
@@ -56,4 +62,3 @@ app.post('/Afterschool/:orderInfo', async (req, res, next) => {
   }
 });
 
-startServer();
