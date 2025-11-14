@@ -39,26 +39,22 @@ app.param('lesson', function(req,res,next, lesson) {
   return next();
 })
 
-app.get('/Afterschool/:lesson', async (req, res, next) => {
-  try {
-    const results = await req.collection.find({}).toArray();
-    res.send(results);
-  } catch (err) {
-    next(err);
-  }
+app.get('/Afterschool/:lesson', (req, res, next) => {
+      req.collection.find({}).toArray((e, results) => {
+        if(e) return next(e)
+          res.send(results)
+      })
 });
 
 app.post('/Afterschool/:orderInfo', async (req, res, next) => {
-  try {
-    const { name, phoneNumber, email } = req.body; //add the  spaces and the lessonIds 
+  const { name, phoneNumber, email } = req.body;
 
-    const collection = db.collection('orderInfo');
-    const order = { name, phoneNumber, email};
+  req.collection = db.collection('orderInfo');
 
-    const result = await collection.insertOne(order);
-    res.status(201).send(result);
-  } catch (err) {
-    next(err);
-  }
+  req.collection.insert(req.body, (e, results) => {
+    if(e) return next(e) 
+      res.send(results.ops)
+  })
 });
+
 
