@@ -34,3 +34,15 @@ MongoClient.connect(
     });
   }
 );
+
+app.param('lesson', function(req,res,next, lesson) {
+  req.collection = db.collection(lesson);
+  return next();
+})
+
+app.get('/Afterschool/:lesson', (req, res, next) => {
+      req.collection.find({}).toArray((e, results) => {
+        if(e) return next(e)
+          res.send(results)
+      })
+});
