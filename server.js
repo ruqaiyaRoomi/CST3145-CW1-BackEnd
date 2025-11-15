@@ -46,3 +46,26 @@ app.get('/Afterschool/:lesson', (req, res, next) => {
           res.send(results)
       })
 });
+
+
+app.post('/Afterschool/:orderInfo', (req, res, next) => {
+  const { name, phoneNumber, email, spaces, lessonId } = req.body;
+
+  req.collection = db.collection('orderInfo');
+
+    const lessonIds = req.body.lessonId.map(id => ObjectID(id))
+    const order = {
+        name: name,
+        phoneNumber: phoneNumber,
+        email: email,
+        spaces: spaces,
+        lessonId: lessonIds
+    }
+
+  req.collection.insert(
+          order
+    , (e, results) => {
+    if(e) return next(e) 
+      res.send(results.ops)
+  })
+});
