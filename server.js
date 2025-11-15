@@ -3,7 +3,7 @@ const  MongoClient  = require('mongodb').MongoClient
  const ObjectID = require('mongodb').ObjectID;
 
 const app = express()
-app.use(express.json())
+app.use(express.json());
 app.set('port', 3000)
 
 
@@ -53,7 +53,8 @@ app.post('/Afterschool/:orderInfo', (req, res, next) => {
 
   req.collection = db.collection('orderInfo');
 
-    const lessonIds = req.body.lessonId.map(id => ObjectID(id))
+    const lessonIds = req.body.lessonId.map(id => ObjectID(id));
+
     const order = {
         name: name,
         phoneNumber: phoneNumber,
@@ -63,9 +64,25 @@ app.post('/Afterschool/:orderInfo', (req, res, next) => {
     }
 
   req.collection.insert(
-          order
-    , (e, results) => {
+          order, (e, results) => {
     if(e) return next(e) 
       res.send(results.ops)
   })
 });
+
+
+app.put("/Afterschool/lesson/:id"), (req,res, next) => {
+    req.collection = db.collection('lesson')
+    const lessonId = req.params.id
+    const spaces = req.body
+    
+    req.collection.update(
+        {_id: new ObjectID(lessonId)}, 
+        {$set: spaces},
+        {safe: true, multi: false},
+        (e,result) => {
+            if (e) return next(e)
+            res.send(result.result.n === 1? {msg: 'success'} : {msg: 'error'})
+        }
+    )
+}
