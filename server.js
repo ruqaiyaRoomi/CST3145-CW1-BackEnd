@@ -35,10 +35,32 @@ MongoClient.connect(
   }
 );
 
+app.use((req, res,next) =>{
+    const startTime = Date.now();
+    res.on('finish', () => {
+        const endTime = Date.now();
+        const responseTime = endTime - startTime;
+        console.log(`${req.method} ${req.path} - Status: ${res.statusCode} - Response time - ${responseTime}ms`)
+    });
+    next();
+})
+
 app.param('lesson', function(req,res,next, lesson) {
   req.collection = db.collection(lesson);
   return next();
 })
+
+
+app.use((req, res,next) =>{
+    const startTime = Date.now();
+    res.on('finish', () => {
+        const endTime = Date.now();
+        const responseTime = endTime - startTime;
+        console.log(`${req.method} ${req.path} - Status: ${res.statusCode} - Response time - ${responseTime}ms`)
+    });
+    next();
+})
+
 
 app.get('/Afterschool/:lesson', (req, res, next) => {
       req.collection.find({}).toArray((e, results) => {
@@ -46,6 +68,18 @@ app.get('/Afterschool/:lesson', (req, res, next) => {
           res.send(results)
       })
 });
+
+
+
+app.use((req, res,next) =>{
+    const startTime = Date.now();
+    res.on('finish', () => {
+        const endTime = Date.now();
+        const responseTime = endTime - startTime;
+        console.log(`${req.method} ${req.path} - Status: ${res.statusCode} - Response time - ${responseTime}ms`)
+    });
+    next();
+})
 
 
 app.post('/Afterschool/:orderInfo', (req, res, next) => {
@@ -71,6 +105,17 @@ app.post('/Afterschool/:orderInfo', (req, res, next) => {
 });
 
 
+app.use((req, res,next) =>{
+    const startTime = Date.now();
+    res.on('finish', () => {
+        const endTime = Date.now();
+        const responseTime = endTime - startTime;
+        console.log(`${req.method} ${req.path} - Status: ${res.statusCode} - Response time - ${responseTime}ms`)
+    });
+    next();
+})
+
+
 app.put("/Afterschool/lesson/:id", (req,res, next) => {
     req.collection = db.collection('lesson')
     const lessonId = req.params.id
@@ -86,6 +131,18 @@ app.put("/Afterschool/lesson/:id", (req,res, next) => {
         }
     )
 });
+
+
+app.use((req, res,next) =>{
+    const startTime = Date.now();
+    res.on('finish', () => {
+        const endTime = Date.now();
+        const responseTime = endTime - startTime;
+        console.log(`${req.method} ${req.path} - Status: ${res.statusCode} - Response time - ${responseTime}ms`)
+    });
+    next();
+})
+
 
 
 app.get("/Afterschool/:lesson/search", (req,res, next) => {
