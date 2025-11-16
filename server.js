@@ -1,6 +1,6 @@
 const express = require('express')
 const  MongoClient  = require('mongodb').MongoClient
- const ObjectID = require('mongodb').ObjectID;
+const ObjectID = require('mongodb').ObjectID;
 
 const app = express()
 app.use(express.json());
@@ -71,7 +71,7 @@ app.post('/Afterschool/:orderInfo', (req, res, next) => {
 });
 
 
-app.put("/Afterschool/lesson/:id"), (req,res, next) => {
+app.put("/Afterschool/lesson/:id", (req,res, next) => {
     req.collection = db.collection('lesson')
     const lessonId = req.params.id
     const spaces = req.body
@@ -85,4 +85,4 @@ app.put("/Afterschool/lesson/:id"), (req,res, next) => {
             res.send(result.result.n === 1? {msg: 'success'} : {msg: 'error'})
         }
     )
-}
+});
