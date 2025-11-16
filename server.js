@@ -86,3 +86,34 @@ app.put("/Afterschool/lesson/:id", (req,res, next) => {
         }
     )
 });
+
+
+app.get("/Afterschool/:lesson/search", (req,res, next) => {
+    const keyword = req.query.q || "";
+    console.log(keyword)
+
+    const regex = new RegExp(keyword, "i");
+
+    const collection = db.collection('lesson')
+    
+    const search = {
+       $or: [
+            { subject: { $regex: regex } },
+            { location: { $regex: regex } },
+            { price: { $regex: regex } },
+            { spaces: { $regex: regex } },
+
+        ]
+    }
+
+   collection.find(search).toArray((err, results) => {
+        if (err) {
+            console.error("MongoDB error:", err);
+            return next(err);
+        }
+
+        console.log("Search results:", results); 
+        res.send(results); 
+    });
+
+})
