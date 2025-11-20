@@ -18,7 +18,7 @@ app.use((req, res, next) => {
 let db;
 
 MongoClient.connect(
-  'mongodb+srv://ruqaiyah:RR1026@cw1.u4ssebh.mongodb.net',
+  'mongodb+srv://ruqaiyah:RR1026@cw1.u4ssebh.mongodb.net/?appName=CW1',
   { useNewUrlParser: true, useUnifiedTopology: true },
   (err, client) => {
     if (err) {
