@@ -55,8 +55,6 @@ app.get('/Afterschool/:lesson', (req, res, next) => {
 });
 
 
-
-
 app.post('/Afterschool/orderInfo', (req, res, next) => {
     const errors = []
     const nameRegex = (/^[A-Za-z]+$/);
@@ -81,35 +79,41 @@ app.post('/Afterschool/orderInfo', (req, res, next) => {
      errors.push("Please enter valid email")
   }
 
-  const lessonCollection = db.collection('lessons')
-  lessonCollection.find({_id: {$in: lessonIds}}).toArray((err, exisitingLessons) =>{
-    if(err) return next(err);
-
-    if(exisitingLessons.length !== lessonIds.length) {
-        errors.push("One or more lessons are invalid")
-    }
-
-    if(errors.length > 0) {
-         return res.status(400).send({
-            orderSaved: false,
-            errors
-        })
-    }
-  })
-
-    req.collection = db.collection('orderInfo');
+  if(errors.length > 0) {
+    return res.status(400).send({
+        overSaved: false,
+        errors
+    })
+  }
     const lessonIds = req.body.lessonId.map(id => ObjectID(id));
-    const subjects = req.body.subject;
+
+    const lessonCollection = db.collection('lesson');
+    lessonCollection.find({_id: {$in: lessonId}}).toArray((err, existingLessons) =>{
+        if(err) return next(err);
+
+        if (existingLessons.length !== lessonIds.length) {
+            errors.push("One or more lesson ids dont exist")
+        }
+
+        if (errors.length > 0) {
+            return res.status(400).send({
+                orderSaved: false,
+                errors,
+            })
+        }
+    })
+
+    const orderInfoCollection = db.collection('orderInfo');
     const order = {
         name: name,
         phoneNumber: phoneNumber,
         email: email,
-        subject: subjects,
+        subject: subject,
         spaces: spaces,
         lessonId: lessonIds
     }
 
-  req.collection.insert(
+  orderInfoCollection.insert(
           order, (e, results) => {
     if(e) return next(e) 
       res.send(results.ops)
