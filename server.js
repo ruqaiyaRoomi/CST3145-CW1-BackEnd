@@ -35,15 +35,10 @@ MongoClient.connect(
   }
 );
 
-app.use((req, res,next) =>{
-    const startTime = Date.now();
-    res.on('finish', () => {
-        const endTime = Date.now();
-        const responseTime = endTime - startTime;
-        console.log(`${req.method} ${req.path} - Status: ${res.statusCode} - Response time - ${responseTime}ms`)
-    });
+app.use(function(req, res, next){
+    console.log("in comes a " + req.method + " to " + req.url);
     next();
-})
+});
 
 app.param('lesson', function(req,res,next, lesson) {
   req.collection = db.collection(lesson);
@@ -51,16 +46,11 @@ app.param('lesson', function(req,res,next, lesson) {
 })
 
 
-app.use((req, res,next) =>{
-    const startTime = Date.now();
-    res.on('finish', () => {
-        const endTime = Date.now();
-        const responseTime = endTime - startTime;
-        console.log(`${req.method} ${req.path} - Status: ${res.statusCode} - Response time - ${responseTime}ms`)
-    });
-    next();
-})
 
+app.use(function(req, res, next){
+    console.log("in comes a " + req.method + " to " + req.url);
+    next();
+});
 
 app.get('/Afterschool/:lesson', (req, res, next) => {
       req.collection.find({}).toArray((e, results) => {
@@ -71,18 +61,12 @@ app.get('/Afterschool/:lesson', (req, res, next) => {
 
 
 
-app.use((req, res,next) =>{
-    const startTime = Date.now();
-    res.on('finish', () => {
-        const endTime = Date.now();
-        const responseTime = endTime - startTime;
-        console.log(`${req.method} ${req.path} - Status: ${res.statusCode} - Response time - ${responseTime}ms`)
-    });
+app.use(function(req, res, next){
+    console.log("in comes a " + req.method + " to " + req.url);
     next();
-})
+});
 
-
-app.post('/Afterschool/:orderInfo', (req, res, next) => {
+app.post('/Afterschool/orderInfo', (req, res, next) => {
   const { name, phoneNumber, email, spaces, lessonId } = req.body;
 
   req.collection = db.collection('orderInfo');
@@ -105,15 +89,11 @@ app.post('/Afterschool/:orderInfo', (req, res, next) => {
 });
 
 
-app.use((req, res,next) =>{
-    const startTime = Date.now();
-    res.on('finish', () => {
-        const endTime = Date.now();
-        const responseTime = endTime - startTime;
-        console.log(`${req.method} ${req.path} - Status: ${res.statusCode} - Response time - ${responseTime}ms`)
-    });
+
+app.use(function(req, res, next){
+    console.log("in comes a " + req.method + " to " + req.url);
     next();
-})
+});
 
 
 app.put("/Afterschool/lesson/:id", (req,res, next) => {
@@ -133,16 +113,12 @@ app.put("/Afterschool/lesson/:id", (req,res, next) => {
 });
 
 
-app.use((req, res,next) =>{
-    const startTime = Date.now();
-    res.on('finish', () => {
-        const endTime = Date.now();
-        const responseTime = endTime - startTime;
-        console.log(`${req.method} ${req.path} - Status: ${res.statusCode} - Response time - ${responseTime}ms`)
-    });
-    next();
-})
 
+app.use(function(req, res, next){
+    console.log("in comes a " + req.method + " to " + req.url);
+    next();
+});
+// add error handling  and change the logger middleware
 
 
 app.get("/Afterschool/:lesson/search", (req,res, next) => {
