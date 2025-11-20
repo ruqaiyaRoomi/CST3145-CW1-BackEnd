@@ -81,14 +81,14 @@ app.post('/Afterschool/orderInfo', (req, res, next) => {
 
   if(errors.length > 0) {
     return res.status(400).send({
-        overSaved: false,
+        orderSaved: false,
         errors
     })
   }
-    const lessonIds = req.body.lessonId.map(id => ObjectID(id));
-
+    const lessonIds = lessonId.map(id => ObjectID(id));
     const lessonCollection = db.collection('lesson');
-    lessonCollection.find({_id: {$in: lessonId}}).toArray((err, existingLessons) =>{
+
+    lessonCollection.find({_id: {$in: lessonIds}}).toArray((err, existingLessons) =>{
         if(err) return next(err);
 
         if (existingLessons.length !== lessonIds.length) {
@@ -101,7 +101,7 @@ app.post('/Afterschool/orderInfo', (req, res, next) => {
                 errors,
             })
         }
-    })
+    
 
     const orderInfoCollection = db.collection('orderInfo');
     const order = {
@@ -118,6 +118,8 @@ app.post('/Afterschool/orderInfo', (req, res, next) => {
     if(e) return next(e) 
       res.send(results.ops)
   })
+
+    })
 });
 
 
