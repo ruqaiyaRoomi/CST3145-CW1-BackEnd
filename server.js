@@ -64,14 +64,14 @@ app.post('/Afterschool/orderInfo', (req, res, next) => {
   const { name, phoneNumber, email, spaces, subject , lessonId } = req.body;
 
   if(!name || !phoneNumber || !email || !spaces || !subject || !lessonId) {
-    return response.status(400).send({
+    return res.status(400).send({
                 OrderSaved: false, 
                 message: "All fields are required.",
             });
   }
 
   if(!nameRegex.test(name)) {
-     return response.status(400).send({
+     return res.status(400).send({
                 name: "invalid", 
                 message: "Please enter valid name",
             });
@@ -79,14 +79,14 @@ app.post('/Afterschool/orderInfo', (req, res, next) => {
 
 
   if(!phoneRegex.test(phoneNumber)) {
-     return response.status(400).send({
+     return res.status(400).send({
                 phoneNumber: "invalid", 
                 message: "Please enter valid phone number",
             });
   }
 
   if(!emailRegex.test(email)) {
-     return response.status(400).send({
+     return res.status(400).send({
                 email: "invalid", 
                 message: "Please enter valid email",
             });
