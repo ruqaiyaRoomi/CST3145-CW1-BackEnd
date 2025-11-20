@@ -4,7 +4,7 @@ const ObjectID = require('mongodb').ObjectID;
 
 const app = express()
 app.use(express.json());
-app.set('port', 3000)
+const PORT = process.env.PORT || 3000;
 
 
 app.use((req, res, next) => {
@@ -18,7 +18,7 @@ app.use((req, res, next) => {
 let db;
 
 MongoClient.connect(
-  'mongodb+srv://ruqaiyah:RR1026@cw1.u4ssebh.mongodb.net/?appName=CW1',
+  'mongodb+srv://ruqaiyah:RR1026@cw1.u4ssebh.mongodb.net/',
   { useNewUrlParser: true, useUnifiedTopology: true },
   (err, client) => {
     if (err) {
@@ -29,8 +29,8 @@ MongoClient.connect(
     db = client.db("Afterschool");
     console.log("Connected to MongoDB");
 
-    app.listen(app.get('port'), () => {
-      console.log(`Server running on port ${app.get('port')}`);
+    app.listen(PORT, () => {
+      console.log(`Server running on port ${PORT}`);
     });
   }
 );
