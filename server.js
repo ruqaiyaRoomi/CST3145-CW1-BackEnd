@@ -86,7 +86,7 @@ app.post('/Afterschool/orderInfo', (req, res, next) => {
     if(err) return next(err);
 
     if(exisitingLessons.length !== lessonIds.length) {
-        error.push("One or more lessons are invalid")
+        errors.push("One or more lessons are invalid")
     }
 
     if(error.length > 0) {
