@@ -58,42 +58,34 @@ app.get('/Afterschool/:lesson', (req, res, next) => {
 
 
 app.post('/Afterschool/orderInfo', (req, res, next) => {
+    const errors = []
   const nameRegex = (/^[A-Za-z]+$/);
   const phoneRegex = /^\d{10}$/;
   const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
   const { name, phoneNumber, email, spaces, subject , lessonId } = req.body;
 
   if(!name || !phoneNumber || !email || !spaces || !subject || !lessonId) {
-    return res.status(400).send({
-                OrderSaved: false, 
-                message: "All fields are required.",
-            });
+        errors.push("All fields are required.")
   }
 
   if(!nameRegex.test(name)) {
-     return res.status(400).send({
-                name: "invalid", 
-                message: "Please enter valid name",
-            });
+        errors.push("Please enter valid name")
   }
 
-
   if(!phoneRegex.test(phoneNumber)) {
-     return res.status(400).send({
-                phoneNumber: "invalid", 
-                message: "Please enter valid phone number",
-            });
+        errors.push("Please enter valid phone number")
   }
 
   if(!emailRegex.test(email)) {
-     return res.status(400).send({
-                email: "invalid", 
-                message: "Please enter valid email",
-            });
+     errors.push("Please enter valid email")
   }
 
-  
-
+  if(errors.length > 0) {
+        return res.status(400).send({
+            orderSaved: false,
+            errors
+        })
+  }
 
 
   req.collection = db.collection('orderInfo');
