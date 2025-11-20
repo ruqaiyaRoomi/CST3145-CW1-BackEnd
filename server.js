@@ -92,7 +92,9 @@ app.post('/Afterschool/orderInfo', (req, res, next) => {
         if(err) return next(err);
 
         const lessonMap = {};
-        existingLessons.forEach(l => lessonMap[l._id.toString()] = l.subject);    
+        existingLessons.forEach(l => {
+            lessonMap[l._id.toString()] = {subject: l.subject, spaces: l.spaces}
+        });    
         
         lessonIds.forEach((id) => {
             const idStr = id.toString();
