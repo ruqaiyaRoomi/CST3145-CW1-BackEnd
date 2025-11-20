@@ -98,7 +98,7 @@ app.post('/Afterschool/orderInfo', (req, res, next) => {
         
         lessonIds.forEach((id) => {
             const idStr = id.toString();
-            if(!lessonMap[idStr]) {
+            if(!lessonMap[id]) {
                 errors.push(`Lesson id ${idStr} does not exist`);
             } else {
                 if ((lessonMap[idStr] !== subject) ) {
