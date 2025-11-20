@@ -4,7 +4,8 @@ const ObjectID = require('mongodb').ObjectID;
 
 const app = express()
 app.use(express.json());
-const PORT = process.env.PORT || 3000;
+
+app.set('port', 3000)
 
 
 app.use((req, res, next) => {
@@ -29,8 +30,8 @@ MongoClient.connect(
     db = client.db("Afterschool");
     console.log("Connected to MongoDB");
 
-    app.listen(PORT, () => {
-      console.log(`Server running on port ${PORT}`);
+    app.listen(app.get('port'), () => {
+      console.log(`Server running on port ${app.get('port')}`);
     });
   }
 );
@@ -61,11 +62,12 @@ app.post('/Afterschool/orderInfo', (req, res, next) => {
   req.collection = db.collection('orderInfo');
 
     const lessonIds = req.body.lessonId.map(id => ObjectID(id));
+    const subjects = req.body.subject;
     const order = {
         name: name,
         phoneNumber: phoneNumber,
         email: email,
-        subject: subject,
+        subject: subjects,
         spaces: spaces,
         lessonId: lessonIds
     }
