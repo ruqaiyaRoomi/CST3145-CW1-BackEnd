@@ -62,8 +62,7 @@ app.post('/Afterschool/orderInfo', (req, res, next) => {
     const nameRegex = (/^[A-Za-z]+$/);
     const phoneRegex = /^\d{10}$/;
     const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-    const lessonIds = req.body.lessonId.map(id => ObjectID(id));
-    const subjects = req.body.subject;
+
     const { name, phoneNumber, email, spaces, subject , lessonId } = req.body;
 
   if(!name || !phoneNumber || !email || !spaces || !subject || !lessonId) {
@@ -82,14 +81,15 @@ app.post('/Afterschool/orderInfo', (req, res, next) => {
      errors.push("Please enter valid email")
   }
 
-  req.collection.find({_id: {$in: lessonIds}}).toArray((err, exisitingLessons) =>{
+  const lessonCollection = db.collection('lessons')
+  lessonCollection.find({_id: {$in: lessonIds}}).toArray((err, exisitingLessons) =>{
     if(err) return next(err);
 
     if(exisitingLessons.length !== lessonIds.length) {
         errors.push("One or more lessons are invalid")
     }
 
-    if(error.length > 0) {
+    if(errors.length > 0) {
          return res.status(400).send({
             orderSaved: false,
             errors
@@ -97,8 +97,9 @@ app.post('/Afterschool/orderInfo', (req, res, next) => {
     }
   })
 
-  req.collection = db.collection('orderInfo');
-
+    req.collection = db.collection('orderInfo');
+    const lessonIds = req.body.lessonId.map(id => ObjectID(id));
+    const subjects = req.body.subject;
     const order = {
         name: name,
         phoneNumber: phoneNumber,
