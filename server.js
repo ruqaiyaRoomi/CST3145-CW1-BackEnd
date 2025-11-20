@@ -91,9 +91,16 @@ app.post('/Afterschool/orderInfo', (req, res, next) => {
     lessonCollection.find({_id: {$in: lessonIds}}).toArray((err, existingLessons) =>{
         if(err) return next(err);
 
-        if (existingLessons.length !== lessonIds.length) {
-            errors.push("One or more lesson ids dont exist")
-        }
+        const lessonMap = {};
+        lessons.forEach(l => lessonMap[l._id.toString()] = l.subject);    
+        
+        lessonIds.forEach((id, i ) => {
+            if(!lessonMap[id]) {
+                errors.push(`Lesson id ${id} does not exist`);
+            } else if (lessonMap[id] !== subject[i]) {
+                errors.push(`Subject for lesson ${id} does not match the id`)
+            }
+        })
 
         if (errors.length > 0) {
             return res.status(400).send({
