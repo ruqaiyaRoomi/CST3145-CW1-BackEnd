@@ -85,7 +85,7 @@ app.post('/Afterschool/orderInfo', (req, res, next) => {
         errors
     })
   }
-    const lessonIds = lessonId.map(id => ObjectID(id));
+    const lessonIds = req.body.lessonId.map(id => ObjectID(id));
     const lessonCollection = db.collection('lesson');
 
     lessonCollection.find({_id: {$in: lessonIds}}).toArray((err, existingLessons) =>{
@@ -97,9 +97,17 @@ app.post('/Afterschool/orderInfo', (req, res, next) => {
         lessonIds.forEach((id) => {
             if(!lessonMap[id]) {
                 errors.push(`Lesson id ${id} does not exist`);
-            } else if (lessonMap[id] !== subject) {
+            } else {
+                if ((lessonMap[id] !== subject) ) {
                 errors.push(`Subject for lesson ${id} does not match the id`)
-            }
+                 }
+                
+                 if(spaces > lessonMap[id].spaces) {
+                    errors.push(`No spaces left for Subject: ${subject}, Id: ${id}`)
+                 }
+
+            } 
+
         })
 
         if (errors.length > 0) {
