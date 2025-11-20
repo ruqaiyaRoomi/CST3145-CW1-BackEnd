@@ -45,13 +45,6 @@ app.param('lesson', function(req,res,next, lesson) {
   return next();
 })
 
-
-
-app.use(function(req, res, next){
-    console.log("in comes a " + req.method + " to " + req.url);
-    next();
-});
-
 app.get('/Afterschool/:lesson', (req, res, next) => {
       req.collection.find({}).toArray((e, results) => {
         if(e) return next(e)
@@ -61,22 +54,18 @@ app.get('/Afterschool/:lesson', (req, res, next) => {
 
 
 
-app.use(function(req, res, next){
-    console.log("in comes a " + req.method + " to " + req.url);
-    next();
-});
 
 app.post('/Afterschool/orderInfo', (req, res, next) => {
-  const { name, phoneNumber, email, spaces, lessonId } = req.body;
+  const { name, phoneNumber, email, spaces, subject , lessonId } = req.body;
 
   req.collection = db.collection('orderInfo');
 
     const lessonIds = req.body.lessonId.map(id => ObjectID(id));
-
     const order = {
         name: name,
         phoneNumber: phoneNumber,
         email: email,
+        subject: subject,
         spaces: spaces,
         lessonId: lessonIds
     }
@@ -88,12 +77,6 @@ app.post('/Afterschool/orderInfo', (req, res, next) => {
   })
 });
 
-
-
-app.use(function(req, res, next){
-    console.log("in comes a " + req.method + " to " + req.url);
-    next();
-});
 
 
 app.put("/Afterschool/lesson/:id", (req,res, next) => {
@@ -113,12 +96,6 @@ app.put("/Afterschool/lesson/:id", (req,res, next) => {
 });
 
 
-
-app.use(function(req, res, next){
-    console.log("in comes a " + req.method + " to " + req.url);
-    next();
-});
-// add error handling  and change the logger middleware
 
 
 app.get("/Afterschool/:lesson/search", (req,res, next) => {
