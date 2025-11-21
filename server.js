@@ -143,7 +143,7 @@ app.post('/Afterschool/orderInfo', (req, res, next) => {
 app.put("/Afterschool/lesson/:id", (req,res, next) => {
     req.collection = db.collection('lesson')
     const lessonId = req.params.id
-    const spaces = req.body
+    const spaces = req.body.spaces
     
     req.collection.update(
         {_id: new ObjectID(lessonId)}, 
