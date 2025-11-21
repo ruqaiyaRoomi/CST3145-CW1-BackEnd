@@ -177,11 +177,11 @@ app.get("/Afterschool/:lesson/search", (req,res, next) => {
     }
 
    collection.find(search).toArray((err, results) => {
+      console.log("Search results:", results); 
         if (err) {
             console.error("MongoDB error:", err);
             return next(err);
         }
-
         console.log("Search results:", results); 
         res.send(results); 
     });
