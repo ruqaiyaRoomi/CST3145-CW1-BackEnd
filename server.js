@@ -54,7 +54,6 @@ app.get('/Afterschool/:lesson', (req, res, next) => {
       })
 });
 
-
 app.post('/Afterschool/orderInfo', (req, res, next) => {
     const errors = []
     const nameRegex = (/^[A-Za-z]+$/);
@@ -98,6 +97,7 @@ app.post('/Afterschool/orderInfo', (req, res, next) => {
         
         lessonIds.forEach((id) => {
             const idStr = id.toString();
+            
             if(!lessonMap[idStr]) {
                 errors.push(`Lesson id ${idStr} does not exist`);
             } else {
@@ -140,8 +140,6 @@ app.post('/Afterschool/orderInfo', (req, res, next) => {
     })
 });
 
-
-
 app.put("/Afterschool/lesson/:id", (req,res, next) => {
     req.collection = db.collection('lesson')
     const lessonId = req.params.id
@@ -153,12 +151,14 @@ app.put("/Afterschool/lesson/:id", (req,res, next) => {
         {safe: true, multi: false},
         (e,result) => {
             if (e) return next(e)
-            res.send(result.result.n === 1? {msg: 'success'} : {msg: 'error'})
+            if (result.result && result.result.n === 1) {
+                res.send({message: "success"})
+            } else {
+                res.send({message: "error"})
+            }
         }
     )
 });
-
-
 
 
 app.get("/Afterschool/:lesson/search", (req,res, next) => {
