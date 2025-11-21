@@ -147,7 +147,7 @@ app.put("/Afterschool/lesson/:id", (req,res, next) => {
     
     req.collection.update(
         {_id: new ObjectID(lessonId)}, 
-        {$set: spaces},
+        {$set: {spaces: spaces}},
         {safe: true, multi: false},
         (e,result) => {
             if (e) return next(e)
