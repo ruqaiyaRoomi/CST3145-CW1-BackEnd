@@ -173,9 +173,6 @@ app.get("/Afterschool/:lesson/search", (req,res, next) => {
        $or: [
             { subject: { $regex: regex } },
             { location: { $regex: regex } },
-            { price: { $regex: regex } },
-            { spaces: { $regex: regex } },
-
         ]
     }
 
