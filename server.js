@@ -166,22 +166,28 @@ app.get("/Afterschool/:lesson/search", (req,res, next) => {
     console.log(keyword)
 
     const regex = new RegExp(keyword, "i");
-
+    const isNumber = /^[0-9]+$/.test(keyword);
     const collection = db.collection('lesson')
     
     const search = {
        $or: [
             { subject: { $regex: regex } },
             { location: { $regex: regex } },
+            ...(isNumber ? [
+            { price: { $regex: regex } },
+            { spaces: { $regex: regex } },
+            ] : [])
+            
+
         ]
     }
 
    collection.find(search).toArray((err, results) => {
-      console.log("Search results:", results); 
         if (err) {
             console.error("MongoDB error:", err);
             return next(err);
         }
+
         console.log("Search results:", results); 
         res.send(results); 
     });
