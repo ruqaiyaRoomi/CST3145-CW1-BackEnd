@@ -166,7 +166,8 @@ app.get("/Afterschool/:lesson/search", (req,res, next) => {
     console.log(keyword)
 
     const regex = new RegExp(keyword, "i");
-    const isNumber = /^[0-9]+$/.test(keyword);
+    const isNumber = !isNaN(keyword);
+    const numberValue = parseInt(keyword)
     const collection = db.collection('lesson')
     
     const search = {
@@ -174,10 +175,9 @@ app.get("/Afterschool/:lesson/search", (req,res, next) => {
             { subject: { $regex: regex } },
             { location: { $regex: regex } },
             ...(isNumber ? [
-            { price: { $regex: regex } },
-            { spaces: { $regex: regex } },
+                 { price: numberValue },
+                 { spaces: numberValue},
             ] : [])
-            
 
         ]
     }
