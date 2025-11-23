@@ -88,6 +88,14 @@ app.post("/Afterschool/orderInfo", (req, res, next) => {
     errors.push("Please enter valid email");
   }
 
+  if(!Array.isArray(lessonId) ||!Array.isArray(spaces) || !Array.isArray(subject)) {
+    errors.push("lessonId, spaces and subject should all be arrays")
+  }
+
+  if(lessonId.length !== spaces.length ||lessonId.length !== spaces.length ) {
+    errors.push("All arrays should be of same lenght")
+  }
+
   // checks if there are validation errors and returns 400
   if (errors.length > 0) {
     return res.status(400).send({
@@ -95,13 +103,13 @@ app.post("/Afterschool/orderInfo", (req, res, next) => {
       errors,
     });
   }
-
-
+  // Converts lessonID strings to MongoDB ObjectIDs
+  const lessonIds = lessonId.map((id) => ObjectID(id));
   const lessonCollection = db.collection("lesson");
-  const lessonIds = lessonId.map((id) => id.toString());
 
   // Checks if lessonIDs exist and validates details
-  lessonCollection.find({ _id: { $in: lessonIds.map(id => ObjectID(id)) } })
+  lessonCollection
+    .find({ _id: { $in: lessonIds } })
     .toArray((err, existingLessons) => {
       if (err) return next(err);
 
@@ -109,22 +117,19 @@ app.post("/Afterschool/orderInfo", (req, res, next) => {
       existingLessons.forEach((l) => {
         lessonMap[l._id.toString()] = { subject: l.subject, spaces: l.spaces };
       });
-
       // Checks if Subject and lessonIDs exsist, match and have spaces left
-      lessonIds.forEach((idStr, index) => {
-        const currentSubject = subject[index];
-        const currentSpaces = spaces[index];
+      lessonIds.forEach((id, index) => {
+        const idStr = id.toString();
 
-        const lesson = lessonMap[idStr]
-        if (!lesson) {
+        if (!lessonMap[idStr]) {
           errors.push(`Lesson id ${idStr} does not exist`);
         } else {
-          if (lesson.subject !== currentSubject) {
+          if (lessonMap[idStr].subject !== subject[index]) {
             errors.push(`Subject for lesson ${idStr} does not match the id`);
           }
 
-          if (currentSpaces > lesson.spaces) {
-            errors.push(`No spaces left for Subject: ${currentSubject}, Id: ${idStr}`);
+          if (spaces[index] > lessonMap[idStr].spaces) {
+            errors.push(`No spaces left for Subject: ${subject[index]}`);
           }
         }
       });
