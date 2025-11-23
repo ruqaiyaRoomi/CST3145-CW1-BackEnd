@@ -95,13 +95,13 @@ app.post("/Afterschool/orderInfo", (req, res, next) => {
       errors,
     });
   }
-  // Converts lessonID strings to MongoDB ObjectIDs
-  const lessonIds = lessonId.map((id) => ObjectID(id));
+
+
   const lessonCollection = db.collection("lesson");
+  const lessonIds = lessonId.map((id) => id.toString());
 
   // Checks if lessonIDs exist and validates details
-  lessonCollection
-    .find({ _id: { $in: lessonIds } })
+  lessonCollection.find({ _id: { $in: lessonIds.map(id => ObjectID(id)) } })
     .toArray((err, existingLessons) => {
       if (err) return next(err);
 
@@ -109,19 +109,22 @@ app.post("/Afterschool/orderInfo", (req, res, next) => {
       existingLessons.forEach((l) => {
         lessonMap[l._id.toString()] = { subject: l.subject, spaces: l.spaces };
       });
-      // Checks if Subject and lessonIDs exsist, match and have spaces left
-      lessonIds.forEach((id) => {
-        const idStr = id.toString();
 
-        if (!lessonMap[idStr]) {
+      // Checks if Subject and lessonIDs exsist, match and have spaces left
+      lessonIds.forEach((idStr, index) => {
+        const currentSubject = subject[index];
+        const currentSpaces = spaces[index];
+
+        const lesson = lessonMap[idStr]
+        if (!lesson) {
           errors.push(`Lesson id ${idStr} does not exist`);
         } else {
-          if (lessonMap[idStr].subject !== subject) {
+          if (lesson.subject !== currentSubject) {
             errors.push(`Subject for lesson ${idStr} does not match the id`);
           }
 
-          if (spaces > lessonMap[idStr].spaces) {
-            errors.push(`No spaces left for Subject: ${subject}, Id: ${id}`);
+          if (currentSpaces > lesson.spaces) {
+            errors.push(`No spaces left for Subject: ${currentSubject}, Id: ${idStr}`);
           }
         }
       });
