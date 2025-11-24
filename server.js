@@ -1,4 +1,5 @@
 // Import Packages
+
 const express = require("express");
 const MongoClient = require("mongodb").MongoClient;
 const ObjectID = require("mongodb").ObjectID;
@@ -92,10 +93,6 @@ app.post("/Afterschool/orderInfo", (req, res, next) => {
     errors.push("lessonId, spaces and subject should all be arrays")
   }
 
-  if(lessonId.length !== spaces.length ||lessonId.length !== spaces.length ) {
-    errors.push("All arrays should be of same lenght")
-  }
-
   // checks if there are validation errors and returns 400
   if (errors.length > 0) {
     return res.status(400).send({
@@ -103,35 +100,45 @@ app.post("/Afterschool/orderInfo", (req, res, next) => {
       errors,
     });
   }
-  // Converts lessonID strings to MongoDB ObjectIDs
-  const lessonIds = lessonId.map((id) => ObjectID(id));
+
+  const aggregated = {};
+  lessonId.forEach((id, i) => {
+    if(!aggregated[id]) aggregated[id] = {
+        subject: subject[i], spaces: spaces[i]};
+    else aggregated[id].spaces += spaces[i]
+  })
+
+  const uniqueLessonIds = Object.keys(aggregated).map((id) => ObjectID(id))
   const lessonCollection = db.collection("lesson");
 
   // Checks if lessonIDs exist and validates details
   lessonCollection
-    .find({ _id: { $in: lessonIds } })
-    .toArray((err, existingLessons) => {
+    .find({ _id: { $in: uniqueLessonIds } })
+    .toArray((err, lessons) => {
       if (err) return next(err);
 
+
       const lessonMap = {};
-      existingLessons.forEach((l) => {
+      lessons.forEach((l) => {
         lessonMap[l._id.toString()] = { subject: l.subject, spaces: l.spaces };
       });
       // Checks if Subject and lessonIDs exsist, match and have spaces left
-      lessonIds.forEach((id, index) => {
+      uniqueLessonIds.forEach((id) => {
         const idStr = id.toString();
+    
 
         if (!lessonMap[idStr]) {
           errors.push(`Lesson id ${idStr} does not exist`);
-        } else {
-          if (lessonMap[idStr].subject !== subject[index]) {
-            errors.push(`Subject for lesson ${idStr} does not match the id`);
+        } 
+
+        if (lessonMap[idStr].subject !== aggregated[idStr].subject) {
+            errors.push(`Subject for lesson ${aggregated[idStr].subject} does not match the id`);
           }
 
-          if (spaces[index] > lessonMap[idStr].spaces) {
-            errors.push(`No spaces left for Subject: ${subject[index]}`);
+        if (aggregated[idStr].spaces > lessonMap[idStr].spaces) {
+            errors.push(`No spaces left for Subject: ${aggregated[idStr].subject}`);
           }
-        }
+        
       });
 
       if (errors.length > 0) {
@@ -147,9 +154,10 @@ app.post("/Afterschool/orderInfo", (req, res, next) => {
         name: name,
         phoneNumber: phoneNumber,
         email: email,
-        subject: subject,
-        spaces: spaces,
-        lessonId: lessonIds,
+        lessonId: uniqueLessonIds,
+        subject: Object.values(aggregated).map((v)=> v.subject),
+        spaces: Object.values(aggregated).map((v) => v.spaces),
+       
       };
 
       orderInfoCollection.insert(order, (e, results) => {
@@ -158,11 +166,14 @@ app.post("/Afterschool/orderInfo", (req, res, next) => {
       });
     });
 });
+
 // PUT route to update spaces
 app.put("/Afterschool/lesson/:id", (req, res, next) => {
   req.collection = db.collection("lesson");
   const lessonId = req.params.id;
   const spaces = req.body.spaces;
+
+  // add error handling 
 
   //update the spaces for each lesson
   req.collection.update(
