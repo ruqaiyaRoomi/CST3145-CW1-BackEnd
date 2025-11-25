@@ -89,8 +89,12 @@ app.post("/Afterschool/orderInfo", (req, res, next) => {
     errors.push("Please enter valid email");
   }
 
-  if(!Array.isArray(lessonId) ||!Array.isArray(spaces) || !Array.isArray(subject)) {
-    errors.push("lessonId, spaces and subject should all be arrays")
+  if (
+    !Array.isArray(lessonId) ||
+    !Array.isArray(spaces) ||
+    !Array.isArray(subject)
+  ) {
+    errors.push("lessonId, spaces and subject should all be arrays");
   }
 
   // checks if there are validation errors and returns 400
@@ -103,20 +107,28 @@ app.post("/Afterschool/orderInfo", (req, res, next) => {
 
   const aggregated = {};
   lessonId.forEach((id, i) => {
-    if(!aggregated[id]) aggregated[id] = {
-        subject: subject[i], spaces: spaces[i]};
-    else aggregated[id].spaces += spaces[i]
-  })
+    if (!aggregated[id])
+      aggregated[id] = {
+        subject: subject[i],
+        spaces: spaces[i],
+      };
+    else aggregated[id].spaces += spaces[i];
+  });
 
-  const uniqueLessonIds = Object.keys(aggregated).map((id) => ObjectID(id))
+  const uniqueLessonIds = Object.keys(aggregated).map((id) => ObjectID(id));
   const lessonCollection = db.collection("lesson");
 
   // Checks if lessonIDs exist and validates details
   lessonCollection
     .find({ _id: { $in: uniqueLessonIds } })
     .toArray((err, lessons) => {
-      if (err) return next(err);
+      if (err) {
+        return next(err);
+      }
 
+      if (lessons.length === 0) {
+        errors.push("LessonId does not exist");
+      }
 
       const lessonMap = {};
       lessons.forEach((l) => {
@@ -125,20 +137,22 @@ app.post("/Afterschool/orderInfo", (req, res, next) => {
       // Checks if Subject and lessonIDs exsist, match and have spaces left
       uniqueLessonIds.forEach((id) => {
         const idStr = id.toString();
-    
 
         if (!lessonMap[idStr]) {
           errors.push(`Lesson id ${idStr} does not exist`);
-        } 
+        }
 
         if (lessonMap[idStr].subject !== aggregated[idStr].subject) {
-            errors.push(`Subject for lesson ${aggregated[idStr].subject} does not match the id`);
-          }
+          errors.push(
+            `Subject for lesson ${aggregated[idStr].subject} does not match the id`
+          );
+        }
 
         if (aggregated[idStr].spaces > lessonMap[idStr].spaces) {
-            errors.push(`No spaces left for Subject: ${aggregated[idStr].subject}`);
-          }
-        
+          errors.push(
+            `No spaces left for Subject: ${aggregated[idStr].subject}`
+          );
+        }
       });
 
       if (errors.length > 0) {
@@ -155,9 +169,8 @@ app.post("/Afterschool/orderInfo", (req, res, next) => {
         phoneNumber: phoneNumber,
         email: email,
         lessonId: uniqueLessonIds,
-        subject: Object.values(aggregated).map((v)=> v.subject),
+        subject: Object.values(aggregated).map((v) => v.subject),
         spaces: Object.values(aggregated).map((v) => v.spaces),
-       
       };
 
       orderInfoCollection.insert(order, (e, results) => {
@@ -173,7 +186,7 @@ app.put("/Afterschool/lesson/:id", (req, res, next) => {
   const lessonId = req.params.id;
   const spaces = req.body.spaces;
 
-  // add error handling 
+  // add error handling
 
   //update the spaces for each lesson
   req.collection.update(
@@ -216,9 +229,9 @@ app.get("/Afterschool/:lesson/search", (req, res, next) => {
     }
 
     if (results.length === 0) {
-        res.send({message : "No lessons matching search"})
+      res.send({ message: "No lessons matching search" });
     }
-    
+
     console.log("Search results:", results);
     res.send(results);
   });
