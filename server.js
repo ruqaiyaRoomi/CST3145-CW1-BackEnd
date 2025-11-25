@@ -215,6 +215,10 @@ app.get("/Afterschool/:lesson/search", (req, res, next) => {
       return next(err);
     }
 
+    if (results.length === 0) {
+        res.send({message : "No lessons matching search"})
+    }
+    
     console.log("Search results:", results);
     res.send(results);
   });
