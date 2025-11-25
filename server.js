@@ -65,7 +65,7 @@ app.post("/Afterschool/orderInfo", (req, res, next) => {
   const errors = []; // array to collect validation errors
 
   // Regex
-  const nameRegex = /^[A-Za-z]+$/;
+  const nameRegex = /^[A-Za-z\s]+$/;
   const phoneRegex = /^\d{10}$/;
   const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
 
