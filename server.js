@@ -18,21 +18,23 @@ app.use((req, res, next) => {
 let db;
 
 MongoClient.connect(
-    'mongodb+srv://ruqaiyah:RR1026@cw1.u4ssebh.mongodb.net',
-    (err, client) => {
-        if (err) {
-            console.log("Failed to connect:", err);
-            return;
-        }
-
-        db = client.db("Afterschool");
-        console.log("Connected to MongoDB");
-
-        app.listen(app.get('port'), () => {
-            console.log(`Server running on port ${app.get('port')}`);
-        });
+  'mongodb+srv://ruqaiyah:RR1026@cw1.u4ssebh.mongodb.net',
+  { useNewUrlParser: true, useUnifiedTopology: true },
+  (err, client) => {
+    if (err) {
+      console.log("Failed to connect:", err);
+      return;
     }
+
+    db = client.db("Afterschool");
+    console.log("Connected to MongoDB");
+
+    app.listen(app.get('port'), () => {
+      console.log(`Server running on port ${app.get('port')}`);
+    });
+  }
 );
+
 
 app.param('lesson', function(req,res,next, lesson) {
   req.collection = db.collection(lesson);
@@ -46,15 +48,19 @@ app.get('/Afterschool/:lesson', (req, res, next) => {
       })
 });
 
-app.post('/Afterschool/:orderInfo', async (req, res, next) => {
-  const { name, phoneNumber, email } = req.body;
+app.post('/Afterschool/:orderInfo', (req, res, next) => {
+  const { name, phoneNumber, email, spaces, lessonId } = req.body;
 
   req.collection = db.collection('orderInfo');
 
-  req.collection.insert(req.body, (e, results) => {
+  req.collection.insert(
+          name, phoneNumber, email, spaces, lessonId
+    , (e, results) => {
     if(e) return next(e) 
       res.send(results.ops)
   })
 });
+
+
 
 

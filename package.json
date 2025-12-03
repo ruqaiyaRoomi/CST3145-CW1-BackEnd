@@ -18,10 +18,8 @@
   },
   "homepage": "https://github.com/ruqaiyaRoomi/CST3145-CW1-BackEnd#readme",
   "dependencies": {
-    "body-parser": "^2.2.0",
     "cors": "^2.8.5",
     "express": "^5.1.0",
-    "mongodb": "^3.6.6",
-    "properties-reader": "^2.3.0"
+    "mongodb": "^3.6.6"
   }
 }
