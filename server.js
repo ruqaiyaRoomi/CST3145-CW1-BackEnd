@@ -1,3 +1,26 @@
+<<<<<<< HEAD
+const express = require('express')
+const  MongoClient  = require('mongodb').MongoClient
+ const ObjectID = require('mongodb').ObjectID;
+
+const app = express()
+app.use(express.json())
+app.set('port', 3000)
+
+
+app.use((req, res, next) => {
+    res.setHeader('Access-Control-Allow-Origin', '*')
+    res.setHeader("Access-Control-Allow-Credentials", "true")
+    res.setHeader("Access-Control-Allow-Methods", "GET,HEAD,OPTIONS,POST,PUT")
+    res.setHeader("Access-Control-Allow-Headers", "Content-Type")
+    next()
+})
+
+let db;
+
+MongoClient.connect(
+  'mongodb+srv://ruqaiyah:RR1026@cw1.u4ssebh.mongodb.net',
+=======
 // Import Packages
 
 const express = require("express");
@@ -24,6 +47,7 @@ let db;
 // MongoDB connection
 MongoClient.connect(
   "mongodb+srv://ruqaiyah:RR1026@cw1.u4ssebh.mongodb.net/",
+>>>>>>> ef4a084eda82e615e238151004176288d1c4253c
   { useNewUrlParser: true, useUnifiedTopology: true },
   (err, client) => {
     if (err) {
@@ -34,13 +58,49 @@ MongoClient.connect(
     db = client.db("Afterschool");
     console.log("Connected to MongoDB");
 
+<<<<<<< HEAD
+    app.listen(app.get('port'), () => {
+      console.log(`Server running on port ${app.get('port')}`);
+=======
     // start the server only if connection is successful
     app.listen(app.get("port"), () => {
       console.log(`Server running on port ${app.get("port")}`);
+>>>>>>> ef4a084eda82e615e238151004176288d1c4253c
     });
   }
 );
 
+<<<<<<< HEAD
+
+app.param('lesson', function(req,res,next, lesson) {
+  req.collection = db.collection(lesson);
+  return next();
+})
+
+app.get('/Afterschool/:lesson', (req, res, next) => {
+      req.collection.find({}).toArray((e, results) => {
+        if(e) return next(e)
+          res.send(results)
+      })
+});
+
+app.post('/Afterschool/:orderInfo', (req, res, next) => {
+  const { name, phoneNumber, email, spaces, lessonId } = req.body;
+
+  req.collection = db.collection('orderInfo');
+
+  req.collection.insert(
+          name, phoneNumber, email, spaces, lessonId
+    , (e, results) => {
+    if(e) return next(e) 
+      res.send(results.ops)
+  })
+});
+
+
+
+
+=======
 // Logger Middleware
 app.use(function (req, res, next) {
   console.log("in comes a " + req.method + " to " + req.url);
@@ -236,3 +296,4 @@ app.get("/Afterschool/:lesson/search", (req, res, next) => {
     res.send(results);
   });
 });
+>>>>>>> ef4a084eda82e615e238151004176288d1c4253c

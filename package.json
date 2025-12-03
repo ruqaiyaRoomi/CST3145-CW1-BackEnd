@@ -1,4 +1,29 @@
 {
+<<<<<<< HEAD
+  "name": "cst3145-cw1-backend",
+  "version": "1.0.0",
+  "description": "",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ruqaiyaRoomi/CST3145-CW1-BackEnd.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ruqaiyaRoomi/CST3145-CW1-BackEnd/issues"
+  },
+  "homepage": "https://github.com/ruqaiyaRoomi/CST3145-CW1-BackEnd#readme",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^5.1.0",
+    "mongodb": "^3.6.6"
+  }
+=======
     "name": "cw1-backend",
     "author": "Ruqaiya Roomi",
     "private": true,
@@ -12,4 +37,5 @@
         "express": "^5.1.0",
         "mongodb": "^3.6.6"
     }
+>>>>>>> ef4a084eda82e615e238151004176288d1c4253c
 }
