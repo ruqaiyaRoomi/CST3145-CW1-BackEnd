@@ -1,4 +1,5 @@
 {
+<<<<<<< HEAD
   "name": "cst3145-cw1-backend",
   "version": "1.0.0",
   "description": "",
@@ -22,4 +23,19 @@
     "express": "^5.1.0",
     "mongodb": "^3.6.6"
   }
+=======
+    "name": "cw1-backend",
+    "author": "Ruqaiya Roomi",
+    "private": true,
+    "version": "0.2.0",
+    "scripts": {
+        "start": "node server.js"
+    },
+    "dependencies": {
+        "body-parser": "^2.2.0",
+        "cors": "^2.8.5",
+        "express": "^5.1.0",
+        "mongodb": "^3.6.6"
+    }
+>>>>>>> ef4a084eda82e615e238151004176288d1c4253c
 }
