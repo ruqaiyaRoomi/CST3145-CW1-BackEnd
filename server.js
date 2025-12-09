@@ -49,7 +49,7 @@ app.use(function (req, res, next) {
   next();
 });
 
-
+// serving the static file
 app.use(function(req,res,next){
   var filePath = path.join(__dirname, "public", req.url);
   fs.stat(filePath,function(err, fileInfo){
